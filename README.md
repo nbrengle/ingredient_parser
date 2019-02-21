@@ -14,7 +14,14 @@ Units are truncated to the first letter and lower cased. "GRAMS" -> "g".
 > g -> grams
 > Others might get a little strange, (ie. tbsp -> t AND tsp -> t).
 
+>:hammer: Needs Improvement :hammer:
+> Regexes assume that if there is a 3rd word, that the 2nd word is a 'unit'.
+> ie. "2 jumbo eggs" -> {'quantity': '2', 'unit': 'j', 'ingredient': 'eggs'}
+> Whatever a "j" is...
+
 A minimal Flask app is included to expose the parsing function over HTTP.
+
+> :bangbang: Flask server is *not production-ready* > :bangbang:
 
 ```bash
 http --json  POST http://127.0.0.1:5000/parse-ingredient ing='500.5 grams of salt'
