@@ -1,0 +1,5 @@
+web:
+  build: .
+  container_name: ingredient_parser
+  ports:
+    - "5000:5000"

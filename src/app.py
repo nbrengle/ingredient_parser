@@ -1,11 +1,13 @@
 from flask import Flask, jsonify, request
 
-app = Flask(__name__)
+from ingredient_parser import parse_ingredient
 
-@app.route('/parse-ingredient', methods=["POST"])
-def parse_ingredient():
-    ingredient = request.args.get('ing')
+api = Flask(__name__)
+
+@api.route('/parse-ingredient', methods=["POST"])
+def ingredient():
+    ingredient = request.get_json().get('ing')
     return jsonify(parse_ingredient(ingredient))
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', debug=True)
+    api.run(host='0.0.0.0', debug=True)
