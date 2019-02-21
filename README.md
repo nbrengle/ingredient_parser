@@ -8,20 +8,20 @@ Input ingredient strings are assumed to be well formed, no input cleaning is don
 Strings that don't break down neatly along pattern lines are assumed to be ingredients and will return in the 'ingredient' field of the response (with a null in each of the other two fields).
 Units are truncated to the first letter and lower cased. "GRAMS" -> "g".
 
-> The following units are well-represented:
-> t -> teaspoons
-> c -> cups
-> g -> grams
-> Others might get a little strange, (ie. tbsp -> t AND tsp -> t).
+> The following units are well-represented:  
+> t -> teaspoons  
+> c -> cups  
+> g -> grams  
+> Others might get a little strange, (ie. tbsp -> t AND tsp -> t).  
 
->:hammer: Needs Improvement :hammer:
-> Regexes assume that if there is a 3rd word, that the 2nd word is a 'unit'.
-> ie. "2 jumbo eggs" -> {'quantity': '2', 'unit': 'j', 'ingredient': 'eggs'}
-> Whatever a "j" is...
+>:hammer: Needs Improvement :hammer:  
+> Regexes assume that if there is a 3rd word, that the 2nd word is a 'unit'.  
+> ie. "2 jumbo eggs" -> {'quantity': '2', 'unit': 'j', 'ingredient': 'eggs'}  
+> Whatever a "j" is...  
 
 A minimal Flask app is included to expose the parsing function over HTTP.
 
-> :bangbang: Flask server is *not production-ready* > :bangbang:
+> :bangbang: Flask server is *not production-ready* :bangbang:
 
 ```bash
 http --json  POST http://127.0.0.1:5000/parse-ingredient ing='500.5 grams of salt'
@@ -47,7 +47,7 @@ If you're working on MacOS, [homebrew](https://brew.sh/) will be your best frien
 
 ## Use
 
-POST a request to `<host>:<port>/parse-ingredient` with json data keyed with `ing` to get back the response. Take a look at the httpie examples abvove and below for inspiration.
+With the server running, POST a request to `<host>:<port>/parse-ingredient` (default is 0.0.0.0:5000) with json data keyed with `ing` to get back the response. Take a look at the httpie examples abvove and below for inspiration.
 
 ```bash
 http --json  POST http://127.0.0.1:5000/parse-ingredient ing='salt and pepper to taste'
