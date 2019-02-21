@@ -1,3 +1,4 @@
+"""Tests for `ingredient_parser.py`"""
 import pytest
 
 from ingredient_parser import parse_ingredient
@@ -40,4 +41,5 @@ from ingredient_parser import parse_ingredient
     ],
 )
 def test_ingredient_parser(ingredient_str, ingredient_result):
+    """Happy Path Test: examples parse into maps as expected."""
     assert parse_ingredient(ingredient_str) == ingredient_result

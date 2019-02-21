@@ -1,3 +1,15 @@
+"""Ingredient Parser and associated logic.
+
+As additional endpoints or parsers are introduced,
+much of this logic will merit refactoring into a common
+collection of functions usable by other parsers.
+
+The basic idea is simple pipeline as described in `parse`.
+A string is lazily matched against a collection of regexes.
+The first match, if any, is transformed using the re.match.groupdict()
+And then post-processed by a map of fields to post-processing functions.
+
+"""
 from functools import partial
 import re
 from typing import Callable, Dict, Hashable, Iterable, Mapping, Match, Optional, Pattern, TypeVar
@@ -32,6 +44,7 @@ first_not_none: Callable[[Iterable[A]], Optional[A]] = excepts(
 def pattern_match(patterns: Iterable[Pattern], text: str) -> Optional[Match]:
     matching = (p.search(text) for p in patterns)
     return first_not_none(matching)
+
 
 def groupdict(match: Optional[Match]) -> Dict:
     out: Dict = {}
