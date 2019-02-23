@@ -12,10 +12,25 @@ And then post-processed by a map of fields to post-processing functions.
 """
 from functools import partial
 import re
-from typing import Callable, Dict, Hashable, Iterable, Mapping, Match, Optional, Pattern, TypeVar
+from typing import (
+    Callable,
+    Dict,
+    Iterable,
+    Iterator,
+    Mapping,
+    Match,
+    Optional,
+    Pattern,
+    Tuple,
+    TypeVar,
+)
 
-from toolz import get, excepts, identity, thread_last, update_in
+from toolz import excepts, identity, memoize, thread_last, update_in
 
+A = TypeVar("A")
+K = TypeVar("K")
+V = TypeVar("V")
+A_List = Tuple[Tuple[K, V], ...]
 
 _ingredient_patterns: Iterable[Pattern] = thread_last(
     [
@@ -24,26 +39,23 @@ _ingredient_patterns: Iterable[Pattern] = thread_last(
         r"(?P<ingredient>.+)",
     ],
     (map, re.compile),
-    list,
+    tuple,
 )
 
-_ingredient_cleanup_funcs: Mapping[Hashable, Optional[Callable]] = {
-    "quantity": None,
-    "unit": lambda s: s[0].lower() if s else None,
-    "ingredient": None,
-}
+_ingredient_cleanup_funcs: A_List[str, Optional[Callable]] = (
+    ("quantity", None),
+    ("unit", lambda s: s[0].lower() if s else None),
+    ("ingredient", None),
+)
 
-A = TypeVar('A')
-first_not_none: Callable[[Iterable[A]], Optional[A]] = excepts(
-    StopIteration, 
-    lambda a: next(filter(None, a)),
-    lambda __: None
+next_or_none: Callable[[Iterator[A]], Optional[A]] = excepts(
+    StopIteration, lambda a: next(filter(None, a)), lambda __: None
 )
 
 
 def pattern_match(patterns: Iterable[Pattern], text: str) -> Optional[Match]:
-    matching = (p.search(text) for p in patterns)
-    return first_not_none(matching)
+    matching: Iterator[Optional[Match]] = (p.search(text) for p in patterns)
+    return next_or_none(matching)
 
 
 def groupdict(match: Optional[Match]) -> Dict:
@@ -54,19 +66,18 @@ def groupdict(match: Optional[Match]) -> Dict:
 
 
 def post_process(
-    field_funcs_map: Mapping[Hashable, Optional[Callable]], to_clean: Dict, default=None
+    field_funcs_map: A_List[str, Optional[Callable]], to_clean: Dict, default=None
 ) -> Mapping:
     out = to_clean
-    for key, func in field_funcs_map.items():
+    for key, func in field_funcs_map:
         f = func if func else identity
         out = update_in(out, [key], f, default=default)
     return out
 
 
+@memoize
 def parse(
-    patterns: Iterable[Pattern],
-    post_func_map: Mapping[Hashable, Optional[Callable]],
-    s: str,
+    patterns: Iterable[Pattern], post_func_map: A_List[str, Optional[Callable]], s: str
 ) -> Mapping:
     return thread_last(
         s, (pattern_match, patterns), groupdict, (post_process, post_func_map)

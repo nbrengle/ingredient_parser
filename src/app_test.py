@@ -13,9 +13,5 @@ def app():
 
 def test_api_parse_ingredient(client):
     """Happy path test: A parseable json request, returns a parsed json response."""
-    res = client.post(url_for('ingredient'), json=({'ing': '500.5 grams of salt'}))
-    assert res.json == {
-        "ingredient": "salt",
-        "quantity": "500.5",
-        "unit": "g"
-    }
+    res = client.post(url_for("ingredient"), json=({"ing": "500.5 grams of salt"}))
+    assert res.json == {"ingredient": "salt", "quantity": "500.5", "unit": "g"}
