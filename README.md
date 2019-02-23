@@ -1,5 +1,7 @@
 # Ingredient Parser
 
+<a href="https://github.com/ambv/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
+
 Simple python parser for strings representing ingredients. The essential idea is that it compares the string, lazily, to a collection of regexes, returning the components of the string.
 
 > "500.5 grams of salt" -> {'quantity': '500.5', unit: 'g', 'ingredient': 'salt'}
